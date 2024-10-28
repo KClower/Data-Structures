@@ -1,3 +1,10 @@
+
+import sys
+sys.path.append('./doubly_linked_list')
+from doubly_linked_list import DoublyLinkedList
+
+
+
 class LRUCache:
     """
     Our LRUCache class keeps track of the max number of nodes it
@@ -6,8 +13,12 @@ class LRUCache:
     order, as well as a storage dict that provides fast access
     to every node stored in the cache.
     """
+    
     def __init__(self, limit=10):
-        pass
+        self.limit = limit
+        # self.size = 0
+        self.order = DoublyLinkedList()
+        self.storage = dict()
 
     """
     Retrieves the value associated with the given key. Also
@@ -17,7 +28,17 @@ class LRUCache:
     key-value pair doesn't exist in the cache.
     """
     def get(self, key):
-        pass
+        # Key is not in cache - return None
+        if key not in self.storage:
+            return None
+        else:
+            # Key is in cache
+            # mover it to the most recently used
+            node = self.storage[key]
+            self.order.move_to_end(node)
+            # return value
+            return node.value[1]
+
 
     """
     Adds the given key-value pair to the cache. The newly-
@@ -30,4 +51,23 @@ class LRUCache:
     the newly-specified value.
     """
     def set(self, key, value):
-        pass
+        # Different scenarios
+        # If item/key already exists
+        if key in self.storage:
+            # where is the value stored?
+            node = self.storage[key]
+            # overwrite value
+            node.value = (key, value)
+            # move to tail (most recently used)
+            self.order.move_to_end(node)
+            return
+        # Size is at limit
+        if len(self.order) == self.limit:
+            # evict the oldest one (head)
+            index_of_oldest = self.order.head.value[0]
+            del self.storage[index_of_oldest]
+            self.order.remove_from_head()     
+        # add to order
+        self.order.add_to_tail((key, value))
+        # add to storage
+        self.storage[key] = self.order.tail

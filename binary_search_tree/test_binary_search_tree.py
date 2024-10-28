@@ -1,7 +1,8 @@
 import unittest
 import random
-import sys
 import io
+import sys
+sys.path.append('./binary_search_tree')
 from binary_search_tree import BSTNode
 
 class BinarySearchTreeTests(unittest.TestCase):
